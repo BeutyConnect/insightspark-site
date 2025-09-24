@@ -5,22 +5,19 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { BlogCard } from '@/components/BlogCard'
 import { Badge } from '@/components/ui/badge'
-import { getPublishedPosts, getCategories } from '@/lib/supabase-mock'
+import { getPosts, getCategories } from '@/lib/sanity'
 import heroImage from '@/assets/hero-image.jpg'
 
 export const HomePage = () => {
-  const { data: postsResult } = useQuery({
-    queryKey: ['publishedPosts'],
-    queryFn: () => getPublishedPosts(),
+  const { data: posts = [] } = useQuery({
+    queryKey: ['posts'],
+    queryFn: getPosts,
   })
 
-  const { data: categoriesResult } = useQuery({
+  const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: getCategories,
   })
-
-  const posts = postsResult?.data || []
-  const categories = categoriesResult?.data || []
   const featuredPost = posts[0]
   const recentPosts = posts.slice(1, 7)
 
@@ -136,17 +133,12 @@ export const HomePage = () => {
             
             <div className="flex flex-wrap justify-center gap-4">
               {categories.map((category) => (
-                <Link key={category.id} to={`/category/${category.slug}`}>
-                  <Badge 
-                    variant="secondary" 
+                <Link key={category._id} to={`/category/${category.slug.current}`}>
+                  <Badge
+                    variant="secondary"
                     className="px-6 py-3 text-sm font-medium transition-colors hover:bg-primary hover:text-primary-foreground"
-                    style={{ 
-                      backgroundColor: category.color + '20', 
-                      color: category.color,
-                      borderColor: category.color + '40'
-                    }}
                   >
-                    {category.name}
+                    {category.title}
                   </Badge>
                 </Link>
               ))}
@@ -176,7 +168,7 @@ export const HomePage = () => {
             
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 animate-scale-in">
               {recentPosts.map((post) => (
-                <BlogCard key={post.id} post={post} />
+                <BlogCard key={post._id} post={post} />
               ))}
             </div>
           </div>

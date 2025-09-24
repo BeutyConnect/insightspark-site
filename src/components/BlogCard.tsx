@@ -3,7 +3,7 @@ import { Calendar, Clock, User, ArrowRight } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Post } from '@/lib/supabase-mock'
+import { Post } from '@/lib/sanity'
 import { formatDistanceToNow } from 'date-fns'
 
 interface BlogCardProps {
@@ -12,18 +12,18 @@ interface BlogCardProps {
 }
 
 export const BlogCard = ({ post, featured = false }: BlogCardProps) => {
-  const formattedDate = post.published_at 
-    ? formatDistanceToNow(new Date(post.published_at), { addSuffix: true })
-    : formatDistanceToNow(new Date(post.created_at), { addSuffix: true })
+  const formattedDate = post.publishedAt
+    ? formatDistanceToNow(new Date(post.publishedAt), { addSuffix: true })
+    : formatDistanceToNow(new Date(post._createdAt), { addSuffix: true })
 
   if (featured) {
     return (
-      <Link to={`/post/${post.slug}`}>
+      <Link to={`/post/${post.slug.current}`}>
         <Card className="blog-card overflow-hidden group">
           <div className="aspect-[16/9] overflow-hidden">
-            {post.featured_image ? (
+            {post.mainImage?.asset?.url ? (
               <img
-                src={post.featured_image}
+                src={post.mainImage.asset.url}
                 alt={post.title}
                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
@@ -38,9 +38,9 @@ export const BlogCard = ({ post, featured = false }: BlogCardProps) => {
           
           <CardContent className="p-8">
             <div className="flex items-center gap-4 mb-4">
-              {post.category && (
-                <Badge variant="secondary" style={{ backgroundColor: post.category.color + '20', color: post.category.color }}>
-                  {post.category.name}
+              {post.categories?.[0] && (
+                <Badge variant="secondary">
+                  {post.categories[0].title}
                 </Badge>
               )}
               <div className="flex items-center text-sm text-muted-foreground">
@@ -49,7 +49,7 @@ export const BlogCard = ({ post, featured = false }: BlogCardProps) => {
               </div>
               <div className="flex items-center text-sm text-muted-foreground">
                 <Clock className="mr-1 h-3 w-3" />
-                {post.reading_time || 5} min read
+                5 min read
               </div>
             </div>
 
@@ -66,14 +66,14 @@ export const BlogCard = ({ post, featured = false }: BlogCardProps) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={post.author?.avatar_url} />
+                  <AvatarImage src={post.author?.image?.asset?.url} />
                   <AvatarFallback>
-                    {post.author?.display_name?.charAt(0) || 'A'}
+                    {post.author?.name?.charAt(0) || 'A'}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="text-sm font-medium">
-                    {post.author?.display_name || 'Anonymous'}
+                    {post.author?.name || 'Anonymous'}
                   </p>
                 </div>
               </div>
@@ -93,7 +93,7 @@ export const BlogCard = ({ post, featured = false }: BlogCardProps) => {
     <Link to={`/post/${post.slug}`}>
       <Card className="blog-card overflow-hidden group h-full">
         <div className="aspect-[4/3] overflow-hidden">
-          {post.featured_image ? (
+          {post.mainImage?.asset?.url ? (
             <img
               src={post.featured_image}
               alt={post.title}
@@ -117,7 +117,7 @@ export const BlogCard = ({ post, featured = false }: BlogCardProps) => {
             )}
             <div className="flex items-center text-xs text-muted-foreground">
               <Clock className="mr-1 h-3 w-3" />
-              {post.reading_time || 5} min
+              5 min
             </div>
           </div>
 
@@ -140,7 +140,7 @@ export const BlogCard = ({ post, featured = false }: BlogCardProps) => {
                 </AvatarFallback>
               </Avatar>
               <div className="text-xs text-muted-foreground">
-                {post.author?.display_name || 'Anonymous'}
+                {post.author?.name || 'Anonymous'}
               </div>
             </div>
             

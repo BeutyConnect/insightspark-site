@@ -1,34 +1,14 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { Search, Menu, X, User, LogOut } from 'lucide-react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Search, Menu, X, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { useQuery } from '@tanstack/react-query'
-import { getCurrentUser, signOut } from '@/lib/supabase-mock'
-import { useNavigate } from 'react-router-dom'
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const location = useLocation()
   const navigate = useNavigate()
-
-  const { data: user } = useQuery({
-    queryKey: ['currentUser'],
-    queryFn: getCurrentUser,
-  })
-
-  const handleSignOut = async () => {
-    await signOut()
-    navigate('/')
-    window.location.reload()
-  }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -47,7 +27,7 @@ export const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="text-2xl font-heading font-bold text-gradient">
-              BlogCraft
+              CodeCraft Weekly
             </div>
           </Link>
 
@@ -95,35 +75,16 @@ export const Header = () => {
               </div>
             </form>
 
-            {/* User Menu */}
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="relative h-8 w-8 rounded-full">
-                    <User className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuItem onClick={() => navigate('/admin')}>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Admin Dashboard</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign Out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm" onClick={() => navigate('/login')}>
-                  Sign In
-                </Button>
-                <Button size="sm" onClick={() => navigate('/signup')}>
-                  Sign Up
-                </Button>
-              </div>
-            )}
+            {/* Admin Dashboard Link */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/admin')}
+              className="gap-2"
+            >
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">Admin</span>
+            </Button>
 
             {/* Mobile Menu Button */}
             <Button

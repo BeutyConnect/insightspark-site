@@ -1,73 +1,224 @@
-# Welcome to your Lovable project
+# InsightSpark Blog
 
-## Project info
+A modern blog built with React, TypeScript, and Sanity CMS.
 
-**URL**: https://lovable.dev/projects/7f48ee29-1a91-46e4-8fb6-63f296322df5
+## Features
 
-## How can I edit this code?
+- 🎨 Modern, responsive design built with Tailwind CSS
+- 📝 Content management with Sanity CMS
+- 🔍 Search functionality
+- 📊 Admin dashboard for content overview
+- 🎯 Category-based content organization
+- ⚡ Fast loading with Vite
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend**: React 18, TypeScript, Vite
+- **UI Components**: Shadcn/UI, Radix UI
+- **Styling**: Tailwind CSS
+- **CMS**: Sanity CMS
+- **State Management**: TanStack Query
+- **Routing**: React Router
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7f48ee29-1a91-46e4-8fb6-63f296322df5) and start prompting.
+## Setup Instructions
 
-Changes made via Lovable will be committed automatically to this repo.
+### 1. Install Dependencies
 
-**Use your preferred IDE**
+```bash
+npm install
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 2. Set up Sanity CMS
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Create a new Sanity project at [sanity.io](https://www.sanity.io/)
+2. Copy `.env.example` to `.env` and fill in your Sanity project details:
 
-Follow these steps:
+```bash
+cp .env.example .env
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Edit `.env`:
+```
+VITE_SANITY_PROJECT_ID=your_project_id_here
+VITE_SANITY_TOKEN=your_sanity_token_here
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 3. Set up Sanity Studio
 
-# Step 3: Install the necessary dependencies.
-npm i
+You'll need to create the following schemas in your Sanity project:
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+#### Post Schema
+```javascript
+{
+  name: 'post',
+  title: 'Post',
+  type: 'document',
+  fields: [
+    {
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+    },
+    {
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: {
+        source: 'title',
+        maxLength: 96,
+      },
+    },
+    {
+      name: 'excerpt',
+      title: 'Excerpt',
+      type: 'text',
+    },
+    {
+      name: 'mainImage',
+      title: 'Main image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+    },
+    {
+      name: 'categories',
+      title: 'Categories',
+      type: 'array',
+      of: [{type: 'reference', to: {type: 'category'}}],
+    },
+    {
+      name: 'publishedAt',
+      title: 'Published at',
+      type: 'datetime',
+    },
+    {
+      name: 'content',
+      title: 'Content',
+      type: 'array',
+      of: [{type: 'block'}],
+    },
+    {
+      name: 'author',
+      title: 'Author',
+      type: 'reference',
+      to: {type: 'author'},
+    },
+  ],
+}
+```
+
+#### Category Schema
+```javascript
+{
+  name: 'category',
+  title: 'Category',
+  type: 'document',
+  fields: [
+    {
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+    },
+    {
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: {
+        source: 'title',
+        maxLength: 96,
+      },
+    },
+    {
+      name: 'description',
+      title: 'Description',
+      type: 'text',
+    },
+  ],
+}
+```
+
+#### Author Schema
+```javascript
+{
+  name: 'author',
+  title: 'Author',
+  type: 'document',
+  fields: [
+    {
+      name: 'name',
+      title: 'Name',
+      type: 'string',
+    },
+    {
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: {
+        source: 'name',
+        maxLength: 96,
+      },
+    },
+    {
+      name: 'image',
+      title: 'Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+    },
+    {
+      name: 'bio',
+      title: 'Bio',
+      type: 'array',
+      of: [{type: 'block'}],
+    },
+  ],
+}
+```
+
+### 4. Run Development Server
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 5. Access Admin Dashboard
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Visit `/admin` to access the admin dashboard. From there you can:
+- View content overview
+- Open Sanity Studio to create/edit posts
+- Manage categories
+- View analytics
 
-**Use GitHub Codespaces**
+## Available Scripts
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
 
-## What technologies are used for this project?
+## Project Structure
 
-This project is built with:
+```
+src/
+  components/          # Reusable UI components
+    ui/               # Shadcn/UI components
+  lib/                # Utilities and configurations
+    sanity.ts         # Sanity client and data fetching
+  pages/              # Page components
+  hooks/              # Custom React hooks
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Deployment
 
-## How can I deploy this project?
+1. Build the project: `npm run build`
+2. Deploy the `dist` folder to your hosting platform
+3. Make sure to set environment variables in your hosting platform
 
-Simply open [Lovable](https://lovable.dev/projects/7f48ee29-1a91-46e4-8fb6-63f296322df5) and click on Share -> Publish.
+## Contributing
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request

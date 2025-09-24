@@ -6,21 +6,21 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { BlogCard } from '@/components/BlogCard'
-import { getPostBySlug, getPublishedPosts } from '@/lib/supabase-mock'
+import { getPostBySlug, getPosts } from '@/lib/sanity'
 import { formatDistanceToNow } from 'date-fns'
 
 export const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>()
   
-  const { data: postResult, isLoading, error } = useQuery({
+  const { data: post, isLoading, error } = useQuery({
     queryKey: ['post', slug],
     queryFn: () => getPostBySlug(slug!),
     enabled: !!slug,
   })
 
-  const { data: relatedPostsResult } = useQuery({
-    queryKey: ['relatedPosts'],
-    queryFn: () => getPublishedPosts(3),
+  const { data: allPosts = [] } = useQuery({
+    queryKey: ['allPosts'],
+    queryFn: getPosts,
   })
 
   if (isLoading) {
@@ -31,7 +31,7 @@ export const BlogPostPage = () => {
     )
   }
 
-  if (error || !postResult?.data) {
+  if (error || !post) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -45,12 +45,11 @@ export const BlogPostPage = () => {
     )
   }
 
-  const post = postResult.data
-  const relatedPosts = relatedPostsResult?.data?.filter(p => p.id !== post.id).slice(0, 3) || []
+  const relatedPosts = allPosts.filter(p => p._id !== post._id).slice(0, 3)
   
-  const formattedDate = post.published_at 
-    ? formatDistanceToNow(new Date(post.published_at), { addSuffix: true })
-    : formatDistanceToNow(new Date(post.created_at), { addSuffix: true })
+  const formattedDate = post.publishedAt
+    ? formatDistanceToNow(new Date(post.publishedAt), { addSuffix: true })
+    : formatDistanceToNow(new Date(post._createdAt), { addSuffix: true })
 
   return (
     <div className="min-h-screen">
@@ -69,10 +68,10 @@ export const BlogPostPage = () => {
         <div className="container-blog">
           <div className="mx-auto max-w-4xl">
             {/* Featured Image */}
-            {post.featured_image && (
+            {post.mainImage?.asset?.url && (
               <div className="aspect-[16/9] overflow-hidden rounded-2xl mb-8">
                 <img
-                  src={post.featured_image}
+                  src={post.mainImage.asset.url}
                   alt={post.title}
                   className="h-full w-full object-cover"
                 />

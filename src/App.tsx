@@ -7,8 +7,9 @@ import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { HomePage } from "./pages/HomePage";
 import { BlogPostPage } from "./pages/BlogPostPage";
-import { AuthPage } from "./pages/AuthPage";
 import { AdminDashboard } from "./pages/AdminDashboard";
+import { AboutPage } from "./pages/AboutPage";
+import { ContactPage } from "./pages/ContactPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,8 +26,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/post/:slug" element={<BlogPostPage />} />
-              <Route path="/login" element={<AuthPage mode="login" />} />
-              <Route path="/signup" element={<AuthPage mode="signup" />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
               <Route path="/admin" element={<AdminDashboard />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
 import { Github, Twitter, Linkedin, Mail } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { getPublishedPosts, getCategories } from '@/lib/supabase-mock'
+import { getPosts, getCategories } from '@/lib/sanity'
 
 export const Footer = () => {
   const { data: recentPosts } = useQuery({
-    queryKey: ['recentPosts', 3],
-    queryFn: () => getPublishedPosts(3),
+    queryKey: ['recentPosts'],
+    queryFn: getPosts,
   })
 
   const { data: categories } = useQuery({
@@ -22,7 +22,7 @@ export const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-2">
               <div className="text-xl font-heading font-bold text-gradient">
-                BlogCraft
+                CodeCraft Weekly
               </div>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -67,10 +67,10 @@ export const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-sm font-semibold font-heading">Recent Posts</h3>
             <ul className="space-y-3">
-              {recentPosts?.data?.slice(0, 3).map((post) => (
-                <li key={post.id}>
+              {recentPosts?.slice(0, 3).map((post) => (
+                <li key={post._id}>
                   <Link
-                    to={`/post/${post.slug}`}
+                    to={`/post/${post.slug.current}`}
                     className="text-sm text-muted-foreground hover:text-primary transition-colors line-clamp-2"
                   >
                     {post.title}
@@ -84,13 +84,13 @@ export const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-sm font-semibold font-heading">Categories</h3>
             <ul className="space-y-3">
-              {categories?.data?.slice(0, 4).map((category) => (
-                <li key={category.id}>
+              {categories?.slice(0, 4).map((category) => (
+                <li key={category._id}>
                   <Link
-                    to={`/category/${category.slug}`}
+                    to={`/category/${category.slug.current}`}
                     className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
-                    {category.name}
+                    {category.title}
                   </Link>
                 </li>
               ))}
@@ -141,7 +141,7 @@ export const Footer = () => {
         <div className="border-t py-6">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} BlogCraft. All rights reserved.
+              © {new Date().getFullYear()} CodeCraft Weekly. All rights reserved.
             </p>
             <p className="text-sm text-muted-foreground">
               Built with ❤️ using React and Tailwind CSS
